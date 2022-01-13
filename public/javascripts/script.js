@@ -1,6 +1,7 @@
 
 $(document).ready(function() {
 	
+	var percent = 0;
 	//ajax form submission
 	$("#fileUpload").submit(function(e) {
 		e.preventDefault();
@@ -33,11 +34,31 @@ $(document).ready(function() {
 						$(this).attr("disabled", true);
 					});
 					$("#submitbtn").attr("disabled", true).text("Please wait...");
+					
+					$('.progress').css('display','block');
+					
+
+					setInterval(function() {
+						$('.progress-bar').css('width', (percent)+'%').attr('aria-valuenow', percent);
+						$('#show_label_progress').html(percent+'% completed');
+						if(percent<100)
+						percent+=5;
+					}, 50);
+
+
+					// for(var i=0; i<100; i++)
+					// {
+					// 	$('.progress-bar').css('width', (i)+'%').attr('aria-valuenow', i); 
+					// }
 				},
 				cache: false,
 				contentType: false,
 				processData: false,
 				success: function (result) {
+
+					$('.progress').css('display','none');
+					percent = 0;
+
 					if(result && result.status == "success") {
 						$("#successmsg").show().find("div").remove().end().find("button").after("<div><b>"+result.message+"</b></div>");
 						setTimeout(function() {
@@ -54,6 +75,10 @@ $(document).ready(function() {
 					getFiles();
 				},
 				error: function(result) {
+
+					$('.progress').css('display','none');
+					percent = 0;
+					
 					frm.find("input,select").each(function() {
 						$(this).removeAttr("disabled");
 					});
